@@ -1,3 +1,16 @@
+import datetime
+
+LOG_FILE_PATH = "./log/log_{datetime}.log"
+log_file_path=LOG_FILE_PATH.format(datetime=datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
+
+def log(txt):
+    now=datetime.datetime.now().strftime('%Y年%m月%d日%H時%M分%S秒')
+    logStr = '[%s:%s] %s' % ('時間',now,txt)
+# ログの出力   
+    with open(log_file_path , 'a' ,encoding='utf-8_sig') as f:
+        f.write(logStr + '\n')
+    print(logStr)
+
 ### 商品クラス
 # Itemクラス
 # （アトリビュート）コード・名前・金額を引数とする
@@ -76,8 +89,10 @@ def main():
     order.add_item_order("002",5)
     order.add_item_order("003",7)
     
-    オーダー表示
-    print(order.item_count_list)
+    # オーダー表示
+    order_text = ""
+
+    order.view_item_list()
     
     sum_sum = 0 
     for item_order,item_count in zip(order.item_order_list,order.item_count_list): 
@@ -85,7 +100,9 @@ def main():
         o_name = order.get_item_name(item_order)
         o_count = item_count
         o_sum = o_price * o_count
-        print(f"[商品名:{o_name}][価格:{o_price}円][個数:{o_count}個]　この商品の合計金額:{o_sum}円")
+        # print(f"[商品名:{o_name}][価格:{o_price}円][個数:{o_count}個]　この商品の合計金額:{o_sum}円")
+        order_text += f"{o_name} {o_count}個 {o_sum}円\n"
+
         sum_sum = sum_sum + o_sum 
     print(f"購入した全ての商品の合計金額は{sum_sum}円です")    
 
@@ -96,6 +113,13 @@ def main():
 
     change = int(payment) - int(sum_sum)
     print(f"おつりは{change}円です。ご利用ありがとうございました。")
+    
+    log("\n領収書\n\n"
+            f"{order_text}"
+        f"\nお会計：{sum_sum}円\n\n支払金額：{payment}円\nお釣り：{change}円")
+
+main()
+    
     
 
  
